@@ -17,10 +17,10 @@ var StatusCmd = &cobra.Command{
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		resetStreams := quiet.SetupAndGetTeardown()
 		device := hs1xxplug.Hs1xxPlug{IPAddress: DeviceIP}
-		resetStreams()
+		resetStreams := quiet.SetupAndGetTeardown()
 		isOff, err := smartdevice.IsOff(&device)
+		resetStreams()
 		if err != nil {
 			return err
 		}
