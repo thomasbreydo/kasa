@@ -3,16 +3,25 @@ package cmd
 import (
 	"github.com/cgreenhalgh/hs1xxplug"
 	"github.com/spf13/cobra"
-	"github.com/thomasbreydo/kasa/device"
+	"github.com/thomasbreydo/kasa/addflag"
+	"github.com/thomasbreydo/kasa/quiet"
+	"github.com/thomasbreydo/kasa/smartdevice"
 )
 
 var OffCmd = &cobra.Command{
-	Use:   "off <ip>",
-	Short: "Turn off a device",
-	Long:  "Turn off a device using its IP address or hostname.",
-	Args:  OnlyIP,
+	Use:          "off",
+	Short:        "Turn off a device",
+	Long:         "Turn off a device given its IP address or hostname.",
+	Args:         cobra.NoArgs,
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		plug := hs1xxplug.Hs1xxPlug{IPAddress: args[0]}
-		return device.TurnOff(&plug)
+		teardownFunc := quiet.SetupAndGetTeardown()
+		defer teardownFunc()
+		plug := hs1xxplug.Hs1xxPlug{IPAddress: DeviceIP}
+		return smartdevice.TurnOff(&plug)
 	},
+}
+
+func init() {
+	addflag.IP(&DeviceIP, OffCmd)
 }

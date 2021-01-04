@@ -1,4 +1,4 @@
-package device
+package smartdevice
 
 import (
 	"encoding/json"
@@ -28,6 +28,9 @@ func TurnOn(plug *hs1xxplug.Hs1xxPlug) error {
 
 func IsOff(plug *hs1xxplug.Hs1xxPlug) (bool, error) {
 	sysInfo, err := GetSysInfo(plug)
+	if err != nil {
+		return false, err
+	}
 	isOff := sysInfo["system"].(SysInfoJSON)["get_sysinfo"].(SysInfoJSON)["relay_state"] == 0.0
 	return isOff, err
 }
