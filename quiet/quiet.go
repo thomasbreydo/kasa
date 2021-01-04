@@ -7,7 +7,7 @@ import (
 // SetupAndGetTeardown sets stdout and stderr to /dev/null, returning a function
 // to reset them.
 //
-// The returned function should be immediately deferred.
+// The returned function should be called when stdout/stderr need to be reset.
 func SetupAndGetTeardown() func() {
 	null, _ := os.Open(os.DevNull)
 	stdout, stderr := os.Stdout, os.Stderr
