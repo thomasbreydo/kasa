@@ -10,18 +10,25 @@ import (
 
 var OffCmd = &cobra.Command{
 	Use:          "off",
-	Short:        "Turn off a device",
-	Long:         "Turn off a device given its IP address or hostname.",
+	Short:        "Turn off devices",
+	Long:         "Turn off devices given their IP addresses or hostname.",
 	Args:         cobra.NoArgs,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		teardownFunc := quiet.SetupAndGetTeardown()
-		defer teardownFunc()
-		plug := hs1xxplug.Hs1xxPlug{IPAddress: DeviceIP}
-		return smartdevice.TurnOff(&plug)
+		resetStreams := quiet.SetupAndGetTeardown()
+		defer resetStreams()
+		for _, deviceIP := range DeviceIPs {
+			plug := hs1xxplug.Hs1xxPlug{IPAddress: deviceIP}
+			err := smartdevice.TurnOff(&plug)
+			if !IgnoreErrors && err != nil {
+				return err
+			}
+		}
+		return nil
 	},
 }
 
 func init() {
-	addflag.IP(&DeviceIP, OffCmd)
+	addflag.DeviceIP(&DeviceIPs, OffCmd)
+	addflag.IgnoreErrors(&IgnoreErrors, OffCmd)
 }

@@ -1,3 +1,4 @@
 package cmd
 
-var DeviceIP string
+var DeviceIPs []string
+var IgnoreErrors bool
